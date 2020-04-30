@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "io.qameta.allure:allure-gradle:2.3"
+    }
+}
+plugins {
+    id 'groovy'
+    id 'java'
+}
+apply plugin: 'io.qameta.allure'
+group 'com.sample'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    compile 'org.gebish:geb-spock:2.3.1'
+    compile 'org.spockframework:spock-core:1.1-groovy-2.4'
+    compile 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
+    compile 'org.seleniumhq.selenium:selenium-support:3.141.59'
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    testCompile( 'com.athaydes:spock-reports:1.6.2' ) {
+        transitive = false // this avoids affecting your version of Groovy/Spock
+    }
+    testCompile 'org.slf4j:slf4j-api:1.7.13'
+    testCompile 'org.slf4j:slf4j-simple:1.7.13'
+    testCompile "org.seleniumhq.selenium:selenium-chrome-driver:3.141.59"
+    testCompile("io.github.bonigarcia:webdrivermanager:3.6.1")
+    implementation "javax.xml.bind:jaxb-api:2.2.11"
+    implementation "com.sun.xml.bind:jaxb-core:2.2.11"
+    implementation "com.sun.xml.bind:jaxb-impl:2.2.11"
+    implementation "javax.activation:activation:1.1.1"
+}
+allure {
+    aspectjweaver = true
+    version = '2.4.1'
+    useSpock {
+        version = '2.6.0'
+    }
+}
+
+test {
+    exclude '**/mytests/**'
+}
+
+task runAutomationTests(type: Test, description: "Runs the tests I created") {
+    systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
+    include '**/mytests/**'
+}
+
+test {
+    exclude '**/groovygebsuites/**'
+}
+
+task runGroovyGebTests(type: Test, description: "Run all Groovy, Geb test scenarios") {
+    systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
+    include '**/groovygebsuites/**'
+}
